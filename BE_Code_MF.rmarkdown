@@ -5,17 +5,19 @@ format: html
 editor: visual
 ---
 
+
 # Blue Economy Bibliometrics
 
 The following code can be used to run the bibliometric and metadata analysis used for the article: **Navigating the Changing Tides: Exploring Shifting Research Trends in the Blue Economy**
 
-The article aimed to shed light on the prevailing perceptions of this terminology among the general public and scientific community by examining the industries driving research in this field and any associated knowledge gaps and potential biases that may have influenced these perception patterns, by unveiling the evolution of the concept through the growing body of published literature and identifying potential factors contributing to its criticisms. By identifying key proponents and geographical, economic, and research gaps or biases, this research aimed to assist advocates of the Blue Economy in addressing the current influx of negativity, ensuring the movement remains a unified global endeavor.
+The article aimed to shed light on the prevailing perceptions of this terminology among the general public and scientific community by examining the industries driving research in this field and any associated knowledge gaps and potential biases that may have influenced these perception patterns, by unveiling the evolution of the concept through the growing body of published literature and identifying potential factors contributing to its criticisms.
 
 ## Part 1. Setup the R environment
 
 You might need to install some of the libraries.
 
 Citations for the libraries that were used the most can be found in the article's references.
+
 
 ```{r}
 #| include: false
@@ -30,7 +32,6 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(splitstackshape)
-library(forcats)
 library(maps)
 library(ggspatial)
 library(viridis)
@@ -43,15 +44,17 @@ library(scales)
 getwd() #to check that we are in the right working directory
 ```
 
+
 ## Part 2. Call in the data
 
 This part shows the code used to tidy up the raw datasets exported from Scopus and Rayyan, and calls on the final, tidy datasets.
 
-Section 2.1 and 2.2 can be skipped and the code will still work (since we created new csv files with the tidy sets in part 2.3). That said, ***if you run part 2.1 and 2.2, it is not necessary to run part 2.3***.
+***Section 2.1 and 2.2 can be skipped and the code will still work*** (since we created new csv files with the tidy sets in part 2.3). That said, if you run part 2.1 and 2.2, it is not necessary to run part 2.3.
 
 ### 2.1 Tidying up
 
 Because we had a long list of articles, we had to download them in blocks. We converted them to bibliometric dataframes to then merge together. Keep in mind, we created a new dataframe that contains all to avoid needing to run this part. You can find it in section 2.2. That said, you can skip this first block.
+
 
 ```{r}
 #| include: false
@@ -71,7 +74,9 @@ dim(bib) #to chech number of records (703)
 write.csv(bib, "Processed data frames/bib_as_df.csv", row.names = FALSE) #to save this data frame as a csv file
 ```
 
+
 Similarly, the Rayyan dataset had a lot of tidying up to do, so I will share the code here, but this step can be skipped when calling upon the tidy dataset in part 2.2.
+
 
 ```{r}
 #| include: false
@@ -152,7 +157,9 @@ write.csv(bibmetaEXTRA, file = here("Processed data frames/meta_asrows.csv"), ro
 write.csv(bibmetaSEP, file = here("Processed data frames/meta_ascolumns.csv"), row.names = FALSE) 
 ```
 
+
 An extra step here is extracting the altimetrics data from the datasets, which we added in this section so that you don't have to process it (again we saved the final dataframe and can be called upon in section 2.2). Note you need internet to get this information.
+
 
 ```{r}
 #| include: false
@@ -205,7 +212,9 @@ readr::write_csv(Altmetrics, file = here('Processed data frames',"Altmetrics.res
 #print(here("Altmetrics.results_df.csv"))
 ```
 
+
 ### 2.2 Joining the datasets
+
 
 ```{r}
 #| include: false
@@ -243,9 +252,11 @@ readr::write_csv(ALL, file = here('Processed data frames',"ALLtogether.csv"))
 readr::write_csv(ALL_EXTRA, file = here('Processed data frames',"ALLtogether_Extra.csv"))
 ```
 
+
 ### 2.3 Calling the tidy datasets
 
 If you didn't run section 2.1, we start by calling the bibliometrics merged dataframe, and the processed results from the Rayyan screening (we call them separetely cause we will use them separately for most analyses since the joint sets are restricted to the data -e.i. altimetrics, DOIs found)
+
 
 ```{r}
 #| include: false
@@ -266,16 +277,20 @@ bibmetaEXTRA <- read.csv(file = here("Processed data frames/bib&metaEXTRA.csv"),
 bibmetaSEP <- read.csv(file = here("Processed data frames/bib&meta.csv"), header=TRUE)
 ```
 
+
 You can also call the full datasets (but we won't use them)
+
 
 ```{r}
 ALL <- read.csv(file = here("Processed data frames/ALLtogether.csv"), header=TRUE)
 ALL_EXTRA <- read.csv(file = here("Processed data frames/ALLtogether_EXTRA.csv"), header=TRUE)
 ```
 
+
 ## Part 3. General Bibliometrics
 
 This first part will just get some general data that we are interested in using the #bibliometrics library, but then we will merge with the Rayyan set for further analyses
+
 
 ```{r}
 #| message: false
@@ -284,16 +299,18 @@ bibresults <- biblioAnalysis(bib, sep = ";")
 summary(object = bibresults, k = 10, pause = TRUE) #display a series of summary tables
 plot(bibresults, k = 10, pause=TRUE) #takes top 10 values from each plottable table
 #to save plots into a pdf:
-pdf(file = "Plots/bib_descriptive_plots.pdf", height = 8, width = 8, pointsize=10) #
-plot(bibresults, k = 20, pause=FALSE) #this takes top 20 values from each plottable table
-dev.off()
+#pdf(file = "Plots/bib_descriptive_plots.pdf", height = 8, width = 8, pointsize=10) #
+#plot(bibresults, k = 20, pause=FALSE) #this takes top 20 values from each plottable table
+#dev.off()
 ```
+
 
 ## Part 4. General Altimetrics
 
 The most relevant results from the altimetrics analyses using #raltimetrics library
 
 First block will analyze data and the second generates plots for better visualization
+
 
 ```{r}
 #| message: false
@@ -415,10 +432,12 @@ Altimetrics.Table <- DT::datatable(merged_table, rownames = FALSE, width = "100%
 Altimetrics.Table
 
 # Save the file
-write.csv(merged_table, file = here("Plots/AltimetricTable.csv"))
+#write.csv(merged_table, file = here("Plots/AltimetricTable.csv"))
 ```
 
+
 Plots:
+
 
 ```{r}
 #| fig-width: 8 # Width for figures in inches
@@ -465,50 +484,42 @@ totalALT_per_year <- merged_table %>%
   ) %>%
   ungroup()
 
-# Scatter Plot of all
-melted_table <- melt(merged_table, id.vars = "year", measure.vars = c("Policies", "Twitter", "Facebook", "Blogs", "News", "Wikipedia"))
-ggplot(data = melted_table, aes(x = year, y = value, color = variable)) +
-  geom_point() +
-  labs(x = "Year", y = "Number of Inputs", title = "Altmetrics Inputs per Year",
-       subtitle = "Scatter Plot of Altmetrics Inputs per Year for Different Categories") +
-  theme_minimal()
-
  #Scatter Plot of totals
 melted_totals <- melt(totalALT_per_year, id.vars = "year", measure.vars = c("Policies", "Twitter", "Facebook", "Blogs", "News", "Wikipedia"))
 # Plot the scatter plot with lines connecting the data points
 ggplot(data = melted_totals, aes(x = year, y = value, color = variable, group = variable)) +
   geom_point() +
   geom_line() +  # Add this line to connect the dots
-  labs(x = "Year", y = "Total Inputs", title = "Total Altmetrics Inputs per Year",
-       subtitle = "Scatter Plot with Connecting Lines for Total Altmetrics Inputs per Year by Category") +
+  labs(x = "Year", y = "Total Inputs", title = "Total Altmetrics Inputs per Year") +
   theme_minimal()
 
-#Top ten most influential journals
-# Calculate the influence of each journal by summing inputs across all altmetrics categories
-influence_per_journal <- merged_table %>%
+#Top ten most influential journals by altimetric score
+# Calculate the influence of each journal by summing inputs across all altmetrics scores
+influence_per_journalscore <- Altmetrics %>%
   group_by(journal) %>%
-  summarise(total_influence = sum(Policies, Twitter, Facebook, Blogs, News, Wikipedia)) %>%
+  summarise(total_influenceSC = sum(score)) %>%
   ungroup() %>%
-  arrange(desc(total_influence)) # Sort in descending order of influence
+  arrange(desc(total_influenceSC)) # Sort in descending order of influence
 # Select the top 10 most influential journals
-top_10_journals <- head(influence_per_journal, 10)
+top_10_journalsSC <- head(influence_per_journalscore, 10)
 # Plot the bar chart for the top 10 most influential journals
-ggplot(top_10_journals, aes(x = reorder(journal, total_influence), y = total_influence)) +
+ggplot(top_10_journalsSC, aes(x = reorder(journal, total_influenceSC), y = total_influenceSC)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   labs(x = "Journal", y = "Total Influence",
-       title = "Top 10 Most Influential Journals",
-       subtitle = "Bar Chart of Journals by Total Influence",
+       title = "Top 10 Most Influential Journals by score",
        caption = "Influence measured by sum of inputs across all altmetrics categories") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
         plot.caption = element_text(hjust = 0))
 ```
 
+
 ## Part 4. Rayyan screening and joint datasets
 
 This part includes the most relevant results from joining bibliometrics data with the metadata included during the Rayyan screening.
 
 Before starting, I will need to organize the country data
+
 
 ```{r}
 #Who is driving research effort
@@ -616,6 +627,7 @@ ggplot(grouped_dataset, aes(x = "", y = n, fill = region)) +
         axis.ticks.x = element_blank())     # Remove x-axis ticks
 ```
 
+
 ### 4.1 Shifting perceptions
 
 How perceptions have shifted through years, by sectors and depending on the Tier.
@@ -623,6 +635,7 @@ How perceptions have shifted through years, by sectors and depending on the Tier
 Note: Tier 1 - Studies the Blue Economy as a subject \| Tier 2 - Studies about applications of Blue Economy
 
 For this first part, we will use the data frame were sectors are grouped in columns (metaSEP)
+
 
 ```{r}
 #We will see total shifts in point of view in accordance with year (as a percentage of total published data that year), per industry, a combination of both, and shifts in time per country
@@ -686,11 +699,6 @@ ggplot(view_counts_total_per_year, aes(x = factor(year), y = count, fill = View)
         axis.text = element_text(size = 10),
         legend.text = element_text(size = 10),
         legend.box.background = element_rect(colour = "black", size = 0.5))
-#Statistical test
-# Run the linear regression
-lm_mode_growth <- lm(count ~ year, data = view_counts_total_per_year)
-# Obtain the summary statistics
-summary(lm_mode_growth)
 
 # Scatter plot for total points of view per year
 ggplot(view_counts_total_per_year, aes(x = factor(year), y = count, color = View, group = View)) +
@@ -711,7 +719,9 @@ ggplot(view_counts_total_per_year, aes(x = factor(year), y = count, color = View
   scale_color_brewer(palette = "Set1")
 ```
 
+
 Now per Tier (using metaSEP)
+
 
 ```{r}
 #First a chart to understand how many articles of each we have
@@ -789,7 +799,9 @@ ggplot(combined_data, aes(x = factor(year), y = percentage, fill = View)) +
   facet_wrap(~ Classification, ncol = 1)
 ```
 
+
 If we want to see perception shifts per sector, we need the other dataframe (metaEXTRA)
+
 
 ```{r}
 # Calculate the percentage for each point of view category within each sector
@@ -899,8 +911,7 @@ negative_dataPER <- view_percentagesSEC_YR %>%
 ggplot(negative_dataPER, aes(x = year, y = percentage, color = Sector, group = Sector)) +
   geom_point() +
   geom_line() +  # Add this line to connect the dots
-  labs(x = "Year", y = "Percentage", title = "Negative Field Percentages per Year for Each Sector",
-       subtitle = "Scatter Plot with Connecting Lines of Negative Field Percentages by Sector and Year") +
+  labs(x = "Year", y = "Percentage", title = "Negative Field Percentages per Year for Each Sector") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom",
@@ -914,7 +925,9 @@ ggplot(negative_dataPER, aes(x = year, y = percentage, color = Sector, group = S
   scale_color_brewer(palette = "Set1")
 ```
 
+
 If we want to see some altimetrics with this, we will join the merged_table with bibmetaEXTRA and plot
+
 
 ```{r}
 #First we will merge the altimetrics table (merged_table) with bibmetaEXTRA
@@ -939,7 +952,9 @@ ggplot(data = melted_dataVIEWS, aes(x = Media, y = Count, fill = View, group = V
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+
 Shifting trends in top countries
+
 
 ```{r}
 # Group by Country and Sector, and count the number of articles in each sector for each country
@@ -967,7 +982,7 @@ view_counts_summarized.CC <- view_counts_summarized.CC %>%
 # Create the bar plot
 ggplot(view_counts_summarized.CC, aes(x = reorder(AU_CO, total_articles), y = total_articles, fill = View)) +
   geom_bar(stat = "identity") +
-  labs(x = "Country", y = "Total Articles", title = "Top Sectors Published by Top Countries",
+  labs(x = "Country", y = "Total Articles", title = "Views Published by Top Countries",
        fill = "View") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -996,29 +1011,7 @@ view_counts_summarized.CC <- view_counts_summarized.CC %>%
 # Create the bar plot with percentage instead of the count
 ggplot(view_counts_summarized.CC, aes(x = reorder(AU_CO, -percentage_total_articles), y = percentage_total_articles, fill = View)) +
   geom_bar(stat = "identity") +
-  labs(x = "Country", y = "Percentage of Total Articles", title = "Top Sectors Published by Top Countries",
-       fill = "View") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "right",
-        plot.title = element_text(size = 16, face = "bold"),
-        axis.title = element_text(size = 12),
-        axis.text = element_text(size = 10),
-        axis.line.x = element_line(color = "black"),
-        panel.grid.major.y = element_line(color = "gray90"),
-        panel.grid.minor = element_blank()) +
-  scale_fill_brewer(palette = "Set1")
-
-#Now as a percentage of the total global number
-# Calculate the total number of articles across all countries
-total_articles_global <- sum(view_counts_summarized.CC$total_articles.x)
-# Calculate the percentage of total articles for each country and view combination
-view_counts_summarized2 <- view_counts_summarized.CC %>%
-  mutate(percentage_total_articles = (total_articles.x / total_articles_global) * 100)
-# Create the bar plot with percentage instead of the count
-ggplot(view_counts_summarized2, aes(x = reorder(AU_CO, -percentage_total_articles), y = percentage_total_articles, fill = View)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Country", y = "Percentage of Total Articles", title = "Top Sectors Published by Top Countries (Percentages of Total)",
+  labs(x = "Country", y = "Percentage of Total Articles", title = "Percentage of Articles with Negative Views by Country",
        fill = "View") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -1033,7 +1026,7 @@ ggplot(view_counts_summarized2, aes(x = reorder(AU_CO, -percentage_total_article
 
 #pie chart of negative contributions
 # Filter the data to include only rows with negative views
-negative_views_data <- view_counts_summarized2 %>%
+negative_views_data <- view_counts_summarized.CC %>%
   filter(View == "negative")
 # Create the pie chart
 ggplot(negative_views_data, aes(x = "", y = percentage_total_articles, fill = AU_CO)) +
@@ -1044,11 +1037,13 @@ ggplot(negative_views_data, aes(x = "", y = percentage_total_articles, fill = AU
   theme(legend.position = "bottom") 
 ```
 
+
 ### 4.2 Sector effort and influence
 
-Here we will use the dataset with sectors in extra rows (ALLDATA_EXTRA) and (bibmetaEXTRA).
+Here we will use the dataset with sectors in extra rows (metaEXTRA).
 
 First we want to see the total effort
+
 
 ```{r}
 #Percentages of articles per sector (without considering point of view)
@@ -1136,7 +1131,7 @@ ggplot(sector_counts2, aes(x = "", y = count, fill = Sector)) +
         panel.grid.minor = element_blank()) +
   scale_fill_brewer(palette = "Set1")
 
-#One last chart trying to summarize
+#Chart trying to summarize
 # Calculate the total count
 total_count <- sum(view_countsSEC$count)
 # Create the pie chart with total count
@@ -1164,9 +1159,36 @@ ggplot(view_countsSEC, aes(x = "", y = count, fill = Sector)) +
     size = 2,
     color = "black"
   )
+
+#Sector effort evolution through years
+sector_dataYR <- metaEXTRA %>%
+  group_by(Sector, year) %>%
+  summarise(count = n()) %>%
+  mutate(count) %>%
+  ungroup()
+# Reorder levels of "Sector" with "Others" last
+sector_dataYR$Sector <- fct_relevel(sector_dataYR$Sector, "Others", after = Inf)
+# Create the scatter plot for negative field percentages per year for each sector
+ggplot(sector_dataYR, aes(x = year, y = count, color = Sector, group = Sector)) +
+  geom_point() +
+  geom_line() +  # Add this line to connect the dots
+  labs(x = "Year", y = "Count", title = "Annual Research effort per Sector") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        plot.title = element_text(size = 16, face = "bold"),
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        panel.grid.major.y = element_line(color = "gray90"),
+        panel.grid.minor = element_blank()) +
+  scale_color_brewer(palette = "Set1")
 ```
 
+
 Research effort by country/sector
+
 
 ```{r}
 #research effort by country/sector
@@ -1210,7 +1232,9 @@ ggplot(sector_counts_summarized, aes(x = reorder(AU_CO, total_articles), y = tot
 
 ```
 
+
 Industry clusters for the top 10 publishing countries
+
 
 ```{r}
 # Get the top countries based on the total number of articles published
@@ -1259,7 +1283,9 @@ ggplot(data = gather(reordered_matrix, Sector, Count, -AU_CO)) +
 ggsave(here("Plots/clustermap.jpg"), width = 20, height = 20, units = "cm") #save the map on the plot folder
 ```
 
+
 If we want to see some altimetrics with this, we will use the joint set (alltogether_EXTRA)
+
 
 ```{r}
 #Top publishing sectors per media type (which sectors have most attention)
@@ -1287,3 +1313,23 @@ ggplot(data = melted_dataSECTORSNF, aes(x = Media, y = Count, fill = Sector, gro
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+
+## Part 5. Statistical tests
+
+Some quick statistics to ensure observations are significant
+
+
+```{r}
+#Linear regression to determine linear behavior of publications per year growth trend
+lm_mode_growth <- lm(count ~ year, data = view_counts_total_per_year)
+summary(lm_mode_growth) # Obtain the summary statistics
+
+#Linear regression to determine linear behavior of altimetrics per year growth trend
+totalALT_per_year$count <- rowSums(totalALT_per_year[, c("Policies", "Twitter", "Facebook", "Blogs", "News", "Wikipedia")]) #create a column that sums all types
+lm_mode_growth_Alt <- lm(count ~ year, data = totalALT_per_year)
+summary(lm_mode_growth_Alt) # Obtain the summary statistics
+
+
+```
+
