@@ -15,10 +15,9 @@ The article aimed to shed light on the prevailing perceptions of this terminolog
 
 You might need to install some of the libraries.
 
-Citations for the libraries that were used the most can be found in the article's references.
+Citations for the most frequently used libraries can be found in the article's references.
 
-```{r}
-#| include: false
+```{r, echo=TRUE, results='hide'}
 rm(list = ls())
 library(bibliometrix)	#for bibliometrics analysis
 library(rAltmetric) #for altimetrics analysis
@@ -52,8 +51,7 @@ This part shows the code used to tidy up the raw datasets exported from Scopus a
 
 Because we had a long list of articles, we had to download them in blocks. We converted them to bibliometric dataframes to then merge together. Keep in mind, we created a new dataframe that contains all to avoid needing to run this part. You can find it in section 2.2. That said, you can skip this first block.
 
-```{r}
-#| include: false
+```{r,echo=TRUE, results='hide'}
 bib1 <- convert2df(file = here("Articles/scopus (1).bib"), dbsource = "scopus", format = "bibtex")
 bib2 <- convert2df(file = here("Articles/scopus (2).bib"), dbsource = "scopus", format = "bibtex")
 bib3 <- convert2df(file = here("Articles/scopus (3).bib"), dbsource = "scopus", format = "bibtex")
@@ -72,7 +70,7 @@ write.csv(bib, "Processed data frames/bib_as_df.csv", row.names = FALSE) #to sav
 
 Similarly, the Rayyan dataset had a lot of tidying up to do, so I will share the code here, but this step can be skipped when calling upon the tidy dataset in part 2.2.
 
-```{r}
+```{r, echo=TRUE, results='hide'}
 #| include: false
 #First we call the exported Rayyan results
 bibmeta <- read.csv(file = here("Rayyan results/articles.csv"), header = TRUE)
@@ -153,8 +151,7 @@ write.csv(bibmetaSEP, file = here("Processed data frames/meta_ascolumns.csv"), r
 
 An extra step here is extracting the altimetrics data from the datasets, which we added in this section so that you don't have to process it (again we saved the final dataframe and can be called upon in section 2.2). Note you need internet to get this information.
 
-```{r}
-#| include: false
+```{r,echo=TRUE, results='hide'}
 #First we have to make sure we have the dataframe bib
 bib <- read.csv(file = here("Processed data frames/bib_as_df.csv"), header=TRUE) #run this line if the bibliometrics part was not runned 
 
@@ -206,8 +203,7 @@ readr::write_csv(Altmetrics, file = here('Processed data frames',"Altmetrics.res
 
 ### 2.2 Joining the datasets
 
-```{r}
-#| include: false
+```{r,echo=TRUE, results='hide'}
 #join the Rayyan screening with the bibliometrics
 #first we will only keep the tags
 meta_tags <-subset(bibmetaSEP, select = -c(key, title, year, month, day, journal, issn, volume, issue, pages, authors, url, language, publisher, location, abstract, notes, keywords, pubmed_id, pmc_id))
@@ -246,8 +242,7 @@ readr::write_csv(ALL_EXTRA, file = here('Processed data frames',"ALLtogether_Ext
 
 If you didn't run section 2.1, we start by calling the bibliometrics merged dataframe, and the processed results from the Rayyan screening (we call them separetely cause we will use them separately for most analyses since the joint sets are restricted to the data -e.i. altimetrics, DOIs found)
 
-```{r}
-#| include: false
+```{r, echo=TRUE, results='hide'}
 #Call the bibliometrics dataframe
 bib <- read.csv(file = here("Processed data frames/bib_as_df.csv"), header=TRUE)
 #names(bib) #to check columns
@@ -267,7 +262,7 @@ bibmetaSEP <- read.csv(file = here("Processed data frames/bib&meta.csv"), header
 
 You can also call the full datasets (but we won't use them)
 
-```{r}
+```{r,echo=TRUE, results='hide'}
 ALL <- read.csv(file = here("Processed data frames/ALLtogether.csv"), header=TRUE)
 ALL_EXTRA <- read.csv(file = here("Processed data frames/ALLtogether_EXTRA.csv"), header=TRUE)
 ```
